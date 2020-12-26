@@ -36,3 +36,4 @@ ide/*
 test/bin/*
 cmake-build*
 .idea*
+.vscode/*
