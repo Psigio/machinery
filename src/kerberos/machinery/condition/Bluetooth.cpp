@@ -15,7 +15,7 @@ namespace kerberos
                 LINFO << "========> Is available: " << isAvailable;
                 _inRange = isAvailable;
             },
-            [](std::exception_ptr ep) {
+            [this](std::exception_ptr ep) {
                 try
                 {
                     std::rethrow_exception(ep);
@@ -24,9 +24,11 @@ namespace kerberos
                 {
                     LERROR << "Rssi stream error: " << ex.what();
                 }
+                _inRange = false;
             },
-            []() {
-                LINFO << "Bluetooth steam ended";
+            [this]() {
+                LINFO << "Bluetooth stream ended";
+                _inRange = false;
             });
         _inRange = false;
     }
