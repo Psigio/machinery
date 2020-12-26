@@ -37,6 +37,7 @@
         capture/VideoCapture.cpp
         machinery/condition/Time.cpp
         machinery/condition/Enabled.cpp
+        machinery/condition/Bluetooth.cpp
         machinery/algorithm/DifferentialCollins.cpp
         machinery/algorithm/BackgroundSubtraction.cpp
         machinery/expositor/RectangleExpositor.cpp
@@ -52,8 +53,8 @@
         machinery/io/IoPushbullet.cpp
     )
 
-    set(KERBEROS_DEPENDENCIES ${KERBEROS_DEPENDENCIES} opencv restclient mosquitto)
-    set(KERBEROS_LIBRARIES ${KERBEROS_LIBRARIES} ${OPENCV_LIBRARIES} ${RESTCLIENT_LIBRARIES} ${MOSQUITTO_LIBRARIES} pthread)
+    set(KERBEROS_DEPENDENCIES ${KERBEROS_DEPENDENCIES} opencv restclient mosquitto BLE-Range)
+    set(KERBEROS_LIBRARIES ${KERBEROS_LIBRARIES} ${OPENCV_LIBRARIES} ${RESTCLIENT_LIBRARIES} ${MOSQUITTO_LIBRARIES} ${BLE-RANGE_LIBRARIES} pthread)
 
 
 # -------------------------------------------
