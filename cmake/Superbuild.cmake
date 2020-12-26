@@ -59,3 +59,9 @@ include( ExternalProject )
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/External-Mosquitto.cmake)
     set(KERBEROS_DEPENDENCIES ${KERBEROS_DEPENDENCIES} mosquitto)
+
+# --------------------------------------------------------------------------
+# BLE-Range
+
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/External-BLE-Range.cmake)
+    set(KERBEROS_DEPENDENCIES ${KERBEROS_DEPENDENCIES} BLE-Range)
