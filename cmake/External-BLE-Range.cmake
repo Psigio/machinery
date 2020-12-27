@@ -1,7 +1,7 @@
 message("External project: BLE-Range")
 
 ExternalProject_Add(project_BLE-Range
-  GIT_REPOSITORY git@github.com:Psigio/BLE-Range.git
+  GIT_REPOSITORY https://github.com/Psigio/BLE-Range.git
   GIT_TAG HEAD
   SOURCE_DIR BLE-Range
   BINARY_DIR BLE-Range-build
