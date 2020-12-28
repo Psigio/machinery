@@ -2,7 +2,7 @@
 
 namespace kerberos
 {
-    void Kerberos::bootstrap(StringMap & parameters)
+    void Kerberos::bootstrap(StringMap &parameters)
     {
         // --------------------------------
         // Set parameters from command-line
@@ -26,7 +26,7 @@ namespace kerberos
         // guard will re-configure all instances.
 
         std::string directory = configuration.substr(0, configuration.rfind('/'));
-        std::string file = configuration.substr(configuration.rfind('/')+1);
+        std::string file = configuration.substr(configuration.rfind('/') + 1);
         guard = new FW::Guard();
         guard->listenTo(directory, file);
         guard->onChange(&Kerberos::reconfigure);
@@ -35,7 +35,7 @@ namespace kerberos
         // --------------------------
         // This should be forever...
 
-        while(true)
+        while (true)
         {
             // -------------------
             // Initialize data
@@ -53,7 +53,7 @@ namespace kerberos
             // If machinery is NOT allowed to do detection
             // continue iteration
 
-            if(!machinery->allowed(m_images))
+            if (!machinery->allowed(m_images))
             {
                 LINFO << "Machinery on hold, conditions failed.";
                 continue;
@@ -62,12 +62,12 @@ namespace kerberos
             // --------------------
             // Clean image to save
 
-            Image cleanImage = *m_images[m_images.size()-1];
+            Image cleanImage = *m_images[m_images.size() - 1];
 
             // --------------
             // Processing..
 
-            if(machinery->detect(m_images, data))
+            if (machinery->detect(m_images, data))
             {
                 // ---------------------------
                 // If something is detected...
@@ -81,7 +81,7 @@ namespace kerberos
                 // If we have a cloud account, send a notification
                 // to the cloud app.
 
-                if(cloud && cloud->m_publicKey != "")
+                if (cloud && cloud->m_publicKey != "")
                 {
                     cloud->fstream.triggerMotion();
                 }
@@ -96,9 +96,9 @@ namespace kerberos
         }
     }
 
-    std::string Kerberos::toJSON(JSON & data)
+    std::string Kerberos::toJSON(JSON &data)
     {
-        JSON::AllocatorType& allocator = data.GetAllocator();
+        JSON::AllocatorType &allocator = data.GetAllocator();
 
         JSONValue name;
         name.SetString(m_name.c_str(), allocator);
@@ -115,7 +115,7 @@ namespace kerberos
         microseconds.SetString(micro.c_str(), allocator);
         data.AddMember("microseconds", microseconds, allocator);
 
-        data.AddMember("token", rand()%1000, allocator);
+        data.AddMember("token", rand() % 1000, allocator);
 
         rapidjson::StringBuffer buffer;
         rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
@@ -123,10 +123,10 @@ namespace kerberos
         return buffer.GetString();
     }
 
-    void Kerberos::configure(const std::string & configuration)
+    void Kerberos::configure(const std::string &configuration)
     {
         // ---------------------------
-    	// Get settings from XML file
+        // Get settings from XML file
 
         LINFO << "Reading configuration file: " << configuration;
         StringMap settings = kerberos::helper::getSettingsFromXML(configuration);
@@ -139,7 +139,7 @@ namespace kerberos
         StringMap::iterator begin = parameters.begin();
         StringMap::iterator end = parameters.end();
 
-        for(begin; begin != end; begin++)
+        for (begin; begin != end; begin++)
         {
             settings[begin->first] = begin->second;
         }
@@ -154,9 +154,9 @@ namespace kerberos
         // -------------------------------------------
         // Check if we need to disable verbose logging
 
-        easyloggingpp::Logger * logger = easyloggingpp::Loggers::getLogger("business");
-        easyloggingpp::Configurations & config = logger->configurations();
-        if(settings.at("logging") == "false")
+        easyloggingpp::Logger *logger = easyloggingpp::Loggers::getLogger("business");
+        easyloggingpp::Configurations &config = logger->configurations();
+        if (settings.at("logging") == "false")
         {
             LINFO << "Logging is set to info";
             config.set(easyloggingpp::Level::Info, easyloggingpp::ConfigurationType::Enabled, "false");
@@ -181,7 +181,7 @@ namespace kerberos
         // ------------------
         // Stop the io thread
 
-        if(m_ioThread_running)
+        if (m_ioThread_running)
         {
             stopIOThread();
         }
@@ -189,7 +189,8 @@ namespace kerberos
         // --------------------
         // Initialize machinery
 
-        if(machinery != 0) delete machinery;
+        if (machinery != 0)
+            delete machinery;
         machinery = new Machinery();
         machinery->setCapture(capture);
         machinery->setup(settings);
@@ -202,7 +203,7 @@ namespace kerberos
         // -------------------
         // Take first images
 
-        for(ImageVector::iterator it = m_images.begin(); it != m_images.end(); it++)
+        for (ImageVector::iterator it = m_images.begin(); it != m_images.end(); it++)
         {
             delete *it;
         }
@@ -216,12 +217,12 @@ namespace kerberos
     // ----------------------------------
     // Configure capture device + stream
 
-    void Kerberos::configureCapture(StringMap & settings)
+    void Kerberos::configureCapture(StringMap &settings)
     {
         // -----------------------
         // Stop stream and capture
 
-        if(stream != 0)
+        if (stream != 0)
         {
             LINFO << "Steam: Stopping streaming thread";
             stopStreamThread();
@@ -229,10 +230,10 @@ namespace kerberos
             stream = 0;
         }
 
-        if(capture != 0)
+        if (capture != 0)
         {
             LINFO << "Capture: Stop capture device";
-            if(capture->isOpened())
+            if (capture->isOpened())
             {
                 BINFO << "Capture: Disable capture device in machinery";
                 machinery->disableCapture();
@@ -265,7 +266,7 @@ namespace kerberos
         // ------------------
         // Initialize stream
 
-        usleep(1000*5000);
+        usleep(1000 * 5000);
         stream = new Stream();
         stream->configureStream(settings);
         LINFO << "Capture: Start streaming thread";
@@ -275,12 +276,12 @@ namespace kerberos
     // ----------------------------------
     // Configure cloud device + thread
 
-    void Kerberos::configureCloud(StringMap & settings)
+    void Kerberos::configureCloud(StringMap &settings)
     {
         // ---------------------------
         // Initialize cloud service
 
-        if(cloud != 0)
+        if (cloud != 0)
         {
             LINFO << "Cloud: Stop cloud service";
             BINFO << "Cloud: Stop upload thread";
@@ -292,8 +293,16 @@ namespace kerberos
             delete cloud;
         }
 
-        LINFO << "Starting cloud service: " + settings.at("cloud");
-        cloud = Factory<Cloud>::getInstance()->create(settings.at("cloud"));
+        auto cloudSettings = settings.at("cloud");
+        auto cloudEnabled = settings.at("cloudEnabled");
+        if (cloudEnabled != "true")
+        {
+            LINFO << "Cloud services are not enabled";
+            return;
+        }
+
+        LINFO << "Starting cloud service: " + cloudSettings;
+        cloud = Factory<Cloud>::getInstance()->create(cloudSettings);
         cloud->setCapture(capture);
         cloud->setup(settings);
     }
@@ -302,23 +311,23 @@ namespace kerberos
     // Function ran in a thread, which continuously
     // stream MJPEG's.
 
-    void * streamContinuously(void * self)
+    void *streamContinuously(void *self)
     {
-        Kerberos * kerberos = (Kerberos *) self;
+        Kerberos *kerberos = (Kerberos *)self;
 
-        uint8_t * data = new uint8_t[(int)(1280*960*1.5)];
+        uint8_t *data = new uint8_t[(int)(1280 * 960 * 1.5)];
         int32_t length = kerberos->capture->retrieveRAW(data);
 
-        while(kerberos->m_streamThread_running &&
-              kerberos->stream->isOpened())
+        while (kerberos->m_streamThread_running &&
+               kerberos->stream->isOpened())
         {
             try
             {
                 kerberos->stream->connect();
 
-                if(kerberos->stream->hasClients())
+                if (kerberos->stream->hasClients())
                 {
-                    if(kerberos->capture->m_hardwareMJPEGEncoding)
+                    if (kerberos->capture->m_hardwareMJPEGEncoding)
                     {
                         length = kerberos->capture->retrieveRAW(data);
                         kerberos->stream->writeRAW(data, length);
@@ -326,7 +335,7 @@ namespace kerberos
                     else
                     {
                         Image image = kerberos->capture->retrieve();
-                        if(kerberos->capture->m_angle != 0)
+                        if (kerberos->capture->m_angle != 0)
                         {
                             image.rotate(kerberos->capture->m_angle);
                         }
@@ -336,7 +345,9 @@ namespace kerberos
 
                 usleep(kerberos->stream->wait * 1000 * 1000); // sleep x microsec.
             }
-            catch(cv::Exception & ex){}
+            catch (cv::Exception &ex)
+            {
+            }
         }
 
         delete data;
@@ -347,7 +358,7 @@ namespace kerberos
         // ------------------------------------------------
         // Start a new thread that streams MJPEG's continuously.
 
-        if(stream != 0)
+        if (stream != 0)
         {
             //if stream object just exists try to open configured stream port
             stream->open();
@@ -372,34 +383,34 @@ namespace kerberos
     // checks if some detections occurred and
     // execute the IO devices if so.
 
-    void * checkDetectionsContinuously(void * self)
+    void *checkDetectionsContinuously(void *self)
     {
-        Kerberos * kerberos = (Kerberos *) self;
+        Kerberos *kerberos = (Kerberos *)self;
 
         int previousCount = 0;
         int currentCount = 0;
         int timesEqual = 0;
 
-        while(kerberos->m_ioThread_running)
+        while (kerberos->m_ioThread_running)
         {
             try
             {
                 previousCount = currentCount;
                 currentCount = kerberos->m_detections.size();
 
-                if(previousCount == currentCount)
+                if (previousCount == currentCount)
                 {
                     timesEqual++;
                 }
-                else if(timesEqual > 0)
+                else if (timesEqual > 0)
                 {
                     timesEqual--;
                 }
 
                 // If no new detections are found, we will run the IO devices (or max 30 images in memory)
-                if((currentCount > 0 && timesEqual > 4) || currentCount >= 30)
+                if ((currentCount > 0 && timesEqual > 4) || currentCount >= 30)
                 {
-                    LINFO << "Executing IO devices for " + helper::to_string(currentCount)  + " detection(s)";
+                    LINFO << "Executing IO devices for " + helper::to_string(currentCount) + " detection(s)";
 
                     for (int i = 0; i < currentCount; i++)
                     {
@@ -408,7 +419,7 @@ namespace kerberos
                         data.Parse(detection.t.c_str());
 
                         pthread_mutex_lock(&kerberos->m_ioLock);
-                        if(kerberos->machinery->save(detection.k, data))
+                        if (kerberos->machinery->save(detection.k, data))
                         {
                             kerberos->m_detections.erase(kerberos->m_detections.begin());
                         }
@@ -417,15 +428,15 @@ namespace kerberos
                             LOG(ERROR) << "IO: can't execute";
                         }
                         pthread_mutex_unlock(&kerberos->m_ioLock);
-                        usleep(500*1000);
+                        usleep(500 * 1000);
                     }
 
                     timesEqual = 0;
                 }
 
-                usleep(500*1000);
+                usleep(500 * 1000);
             }
-            catch(cv::Exception & ex)
+            catch (cv::Exception &ex)
             {
                 pthread_mutex_unlock(&kerberos->m_ioLock);
             }
@@ -450,4 +461,4 @@ namespace kerberos
         pthread_cancel(m_ioThread);
         pthread_join(m_ioThread, NULL);
     }
-}
+} // namespace kerberos
