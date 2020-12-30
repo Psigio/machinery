@@ -3,6 +3,7 @@ namespace kerberos
 {
     void Bluetooth::setup(const StringMap &settings)
     {
+        LINFO << "Bluetooth Condition Setup";
         Condition::setup(settings);
         std::string adapterName = settings.at("bluetoothAdapter").c_str() ?: std::string("hci0");
         int rssiThreshold = std::atoi(settings.at("bluetoothRssiThreshold").c_str()) ?: -80;
@@ -31,6 +32,7 @@ namespace kerberos
                 _inRange = false;
             });
         _inRange = false;
+        LINFO << "Bluetooth Condition Setup done - listening to " << adapterName << " for " << deviceId;
     }
 
     bool Bluetooth::allowed(const ImageVector &images)
