@@ -5,9 +5,9 @@ namespace kerberos
     {
         LINFO << "Bluetooth Condition Setup";
         Condition::setup(settings);
-        std::string adapterName = settings.at("bluetoothAdapter").c_str() ?: std::string("hci0");
-        int rssiThreshold = std::atoi(settings.at("bluetoothRssiThreshold").c_str()) ?: -80;
-        std::string deviceId = settings.at("bluetoothDevice");
+        std::string adapterName = settings.at("conditions.Bluetooth.bluetoothAdapter").c_str() ?: std::string("hci0");
+        int rssiThreshold = std::atoi(settings.at("conditions.Bluetooth.bluetoothRssiThreshold").c_str()) ?: -80;
+        std::string deviceId = settings.at("conditions.Bluetooth.bluetoothDevice");
         BluetoothDetectorApiFactory factory;
         std::vector<std::string> addresses{deviceId};
         _apiInstance = factory.create(
