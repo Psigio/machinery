@@ -10,10 +10,10 @@
         <delay type="number">5000</delay>
     </Enabled>
     <Bluetooth>
-        <bluetoothAdapter type="string">hci0</bluetoothAdapter>
-        <bluetoothRssiThreshold type="number">-80</bluetoothRssiThreshold>
-        <bluetoothDevice type="string"></bluetoothDevice>
         <delay type="number">5000</delay>
+        <bluetoothAdapter type="text">hci0</bluetoothAdapter>
+        <bluetoothRssiThreshold type="number">-80</bluetoothRssiThreshold>
+        <bluetoothDevice type="text"></bluetoothDevice>
     </Bluetooth>
     
 </conditions>
