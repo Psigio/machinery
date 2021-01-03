@@ -7,9 +7,13 @@ namespace kerberos
         Condition::setup(settings);
         std::string adapterName = settings.at("conditions.Bluetooth.bluetoothAdapter").c_str() ?: std::string("hci0");
         int rssiThreshold = std::atoi(settings.at("conditions.Bluetooth.bluetoothRssiThreshold").c_str()) ?: -80;
-        std::string deviceId = settings.at("conditions.Bluetooth.bluetoothDevice");
+
+        // Can be a comma separated string in config
+        std::string allDevices = settings.at("conditions.Bluetooth.bluetoothDevice");
+        std::vector<std::string> addresses;
+        helper::tokenize(allDevices, addresses, ",");
+        LINFO << "Bluetooth config has " << addresses.size() << " comma separated value(s)";
         BluetoothDetectorApiFactory factory;
-        std::vector<std::string> addresses{deviceId};
         _apiInstance = factory.create(
             adapterName, addresses, rssiThreshold,
             [this](bool isAvailable) {
@@ -34,17 +38,17 @@ namespace kerberos
         _inRange = false;
         int configuredDelay = std::atoi(settings.at("conditions.Bluetooth.delay").c_str());
         setDelay(configuredDelay);
-        LINFO << "Bluetooth Condition Setup done - listening to " << adapterName << " for " << deviceId << " with inhibited-state delay of " << configuredDelay << "ms";
+        LINFO << "Bluetooth Condition Setup done - listening to " << adapterName << " for " << allDevices << " with inhibited-state delay of " << configuredDelay << "ms";
     }
 
     bool Bluetooth::allowed(const ImageVector &images)
     {
         bool isAllowed = !_inRange;
 
-        if(!isAllowed)
+        if (!isAllowed)
         {
             LINFO << "Condition: Bluetooth proximity inhibits processing";
-            usleep(getDelay()*1000);
+            usleep(getDelay() * 1000);
         }
 
         return isAllowed;

@@ -42,7 +42,9 @@ cmake-build*
 *.tcl
 **/CMakeFiles/**
 *Makefile*
-**/*prefix/**/*.txt*
+**/*prefix/**
 *.log
 compile_commands.json
 CMakeCache.txt
+**/*build/**
+thirdparty/**
