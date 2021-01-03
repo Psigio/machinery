@@ -37,3 +37,12 @@ test/bin/*
 cmake-build*
 .idea*
 .vscode/*
+*.cmake
+.cmake/**
+*.tcl
+**/CMakeFiles/**
+*Makefile*
+**/*prefix/**/*.txt*
+*.log
+compile_commands.json
+CMakeCache.txt
