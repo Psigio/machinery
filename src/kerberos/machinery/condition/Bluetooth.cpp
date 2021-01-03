@@ -32,11 +32,21 @@ namespace kerberos
                 _inRange = false;
             });
         _inRange = false;
-        LINFO << "Bluetooth Condition Setup done - listening to " << adapterName << " for " << deviceId;
+        int configuredDelay = std::atoi(settings.at("conditions.Bluetooth.delay").c_str());
+        setDelay(configuredDelay);
+        LINFO << "Bluetooth Condition Setup done - listening to " << adapterName << " for " << deviceId << " with inhibited-state delay of " << configuredDelay << "ms";
     }
 
     bool Bluetooth::allowed(const ImageVector &images)
     {
-        return !_inRange;
+        bool isAllowed = !_inRange;
+
+        if(!isAllowed)
+        {
+            LINFO << "Condition: Bluetooth proximity inhibits processing";
+            usleep(getDelay()*1000);
+        }
+
+        return isAllowed;
     }
 } // namespace kerberos
